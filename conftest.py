@@ -26,6 +26,24 @@ def courier_data(courier_api: CourierApi):
             courier_api.delete(cid)
 
 @pytest.fixture
+def created_couriers(courier_api: CourierApi):
+    couriers: list[dict] = []
+    yield couriers
+    with allure.step("ОЧИСТКА: удалить созданных курьеров"):
+        for courier in couriers:
+            login = courier.get("login")
+            password = courier.get("password")
+            if not login or not password:
+                continue
+            lr = courier_api.login({"login": login, "password": password})
+            try:
+                courier_id = lr.json().get("id")
+            except Exception:
+                courier_id = None
+            if courier_id:
+                courier_api.delete(courier_id)
+
+@pytest.fixture
 def created_order(orders_api: OrdersApi):
     tracks: list[int] = []
     yield tracks

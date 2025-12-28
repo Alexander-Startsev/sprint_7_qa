@@ -19,16 +19,16 @@ class TestCourierLogin:
         j = r.json()
         assert isinstance(j, dict) and "message" in j
 
-    @allure.title("Логин с неверным паролем → 404/400 + message")
+    @allure.title("Логин с неверным паролем → 404 + message")
     def test_login_wrong_password(self, courier_api, courier_data):
         r = courier_api.login({"login": courier_data["login"], "password": "wrong"})
-        assert r.status_code in (404, 400)
+        assert r.status_code == 404
         j = r.json()
         assert isinstance(j, dict) and "message" in j
 
-    @allure.title("Логин несуществующего пользователя → 404/400 + message")
+    @allure.title("Логин несуществующего пользователя → 404 + message")
     def test_login_nonexistent(self, courier_api):
         r = courier_api.login({"login": "ghost_user", "password": "x"})
-        assert r.status_code in (404, 400)
+        assert r.status_code == 404
         j = r.json()
         assert isinstance(j, dict) and "message" in j
